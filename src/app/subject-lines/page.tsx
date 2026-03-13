@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 interface SubjectLineResult {
   subjectLine: string;
   charCount: number;
+  previewText: string;
   explanation: string;
 }
 
@@ -262,6 +263,12 @@ export default function SubjectLinesPage() {
                       {item.charCount}
                     </span>
                   </div>
+                  <p
+                    className="mt-2 text-sm italic"
+                    style={{ color: "#555555", fontWeight: 300 }}
+                  >
+                    {item.previewText}
+                  </p>
                   <p
                     className="mt-3 text-sm leading-relaxed"
                     style={{ color: "#666666", fontWeight: 300 }}

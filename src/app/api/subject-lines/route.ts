@@ -14,6 +14,11 @@ const SubjectLineResponseSchema = z.object({
       z.object({
         subjectLine: z.string(),
         charCount: z.number(),
+        previewText: z
+          .string()
+          .describe(
+            "Email preview text (40-90 chars) that complements the subject line and entices the reader to open"
+          ),
         explanation: z.string(),
       })
     )
@@ -88,7 +93,16 @@ Good curiosity patterns:
 
 **Each subject line should take a different angle** (e.g., pain point, benefit, curiosity, social proof, contrarian take).
 
-Identify the primary CTA on the page, generate 3 subject lines with explanations of the curiosity hook and connection to the CTA, and summarize why they work as a set.`;
+## Preview Text Principles:
+
+For each subject line, also write preview text — the snippet shown after the subject line in the inbox. Preview text should:
+- Be 40-90 characters long
+- **Complement, not repeat** the subject line — extend the thought or add new information
+- Continue the curiosity loop or provide a concrete reason to open
+- Never start with "View in browser" or other boilerplate
+- Work as a natural continuation when read alongside the subject line
+
+Identify the primary CTA on the page, generate 3 subject lines (each with preview text) and explanations of the curiosity hook and connection to the CTA, and summarize why they work as a set.`;
 }
 
 export async function POST(request: Request) {
