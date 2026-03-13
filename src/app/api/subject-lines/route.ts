@@ -58,7 +58,53 @@ function extractTextFromHtml(html: string): string {
     .slice(0, 8000);
 }
 
-function buildPrompt(pageContent: string, specifics?: string): string {
+const PURPOSE_GUIDANCE: Record<string, string> = {
+  "event-invite": `This is an EVENT INVITATION email. The goal is to get the recipient to register/attend for the first time.
+- Create urgency around the event value, not the deadline
+- Highlight what they'll learn or who they'll hear from
+- The CTA should drive toward registration
+- Preview text should tease a specific session, speaker, or insight`,
+
+  "event-reminder": `This is an EVENT REMINDER email for someone already registered.
+- Reinforce their decision to register — make them excited, not guilty
+- Reference what's coming up (specific sessions, speakers, key topics)
+- The tone should be anticipatory, not nagging
+- Preview text should surface a specific detail that makes them want to show up`,
+
+  "event-last-call": `This is a LAST CALL / final reminder email before an event.
+- Create genuine urgency — seats filling, time running out, last chance to join
+- Keep it punchy and direct — no long explanations
+- Numbers work well here (e.g., "48 hours", "only X spots")
+- Preview text should reinforce the deadline or scarcity`,
+
+  "content-download": `This is a CONTENT DOWNLOAD PROMOTION email (whitepaper, guide, report, ebook).
+- Lead with the insight or data the content contains, not the format
+- Make them curious about what's inside — tease a finding or stat
+- Avoid generic "download our guide" language
+- Preview text should hint at a specific takeaway or data point`,
+
+  "follow-up-attended": `This is a FOLLOW-UP email for someone who ATTENDED an event.
+- Reference the event they attended — make it personal
+- Offer next steps: recording, slides, related content, or a meeting
+- Tone should be warm and continuing the conversation
+- Preview text should reference something specific from the event`,
+
+  "follow-up-no-show": `This is a FOLLOW-UP email for someone who REGISTERED but DID NOT ATTEND.
+- Don't guilt-trip — assume they were busy
+- Lead with what they missed and how they can still get the value (recording, recap, slides)
+- Keep it low-pressure but make the content sound unmissable
+- Preview text should highlight what they can still access`,
+};
+
+function buildPrompt(
+  pageContent: string,
+  purpose?: string,
+  specifics?: string
+): string {
+  const purposeBlock = purpose && PURPOSE_GUIDANCE[purpose]
+    ? `## Email Purpose:\n\n${PURPOSE_GUIDANCE[purpose]}\n\n`
+    : "";
+
   return `You are an expert B2B email marketing copywriter specializing in supply chain SaaS.
 
 Analyze the following landing page content and generate 3 email subject lines that would drive opens and clicks to this page.
@@ -66,7 +112,7 @@ Analyze the following landing page content and generate 3 email subject lines th
 ## Landing Page Content:
 ${pageContent}
 
-${specifics ? `## Additional Requirements:\n${specifics}\n` : ""}
+${purposeBlock}${specifics ? `## Additional Requirements:\n${specifics}\n` : ""}
 ## Identifying the Primary CTA:
 
 The primary CTA is the ONE specific action this landing page was built to drive. It is NOT a generic site-wide element. Follow these rules:
@@ -106,7 +152,7 @@ Identify the primary CTA on the page, generate 3 subject lines (each with previe
 }
 
 export async function POST(request: Request) {
-  let body: { url?: string; specifics?: string };
+  let body: { url?: string; purpose?: string; specifics?: string };
 
   try {
     body = await request.json();
@@ -117,7 +163,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { url, specifics } = body;
+  const { url, purpose, specifics } = body;
 
   if (!url || typeof url !== "string") {
     return NextResponse.json(
@@ -176,7 +222,7 @@ export async function POST(request: Request) {
     const result = await generateObject({
       model: getLanguageModel(),
       schema: SubjectLineResponseSchema,
-      prompt: buildPrompt(pageContent, specifics),
+      prompt: buildPrompt(pageContent, purpose, specifics),
     });
 
     return NextResponse.json(result.object);

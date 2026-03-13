@@ -19,8 +19,19 @@ interface SubjectLineResponse {
 const brandFont =
   "Graphik, Arial, -apple-system, BlinkMacSystemFont, sans-serif";
 
+const PURPOSE_OPTIONS = [
+  { value: "", label: "Select a purpose..." },
+  { value: "event-invite", label: "Event Invite" },
+  { value: "event-reminder", label: "Event Reminder" },
+  { value: "event-last-call", label: "Event Last Call" },
+  { value: "content-download", label: "Content Download Promotion" },
+  { value: "follow-up-attended", label: "Follow Up — Attended" },
+  { value: "follow-up-no-show", label: "Follow Up — No Show" },
+];
+
 export default function SubjectLinesPage() {
   const [url, setUrl] = useState("");
+  const [purpose, setPurpose] = useState("");
   const [specifics, setSpecifics] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +47,11 @@ export default function SubjectLinesPage() {
       const res = await fetch("/api/subject-lines", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, specifics: specifics || undefined }),
+        body: JSON.stringify({
+          url,
+          purpose: purpose || undefined,
+          specifics: specifics || undefined,
+        }),
       });
 
       const data = await res.json();
@@ -125,6 +140,49 @@ export default function SubjectLinesPage() {
                 (e.currentTarget.style.borderBottomColor = "#cccccc")
               }
             />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="purpose"
+              className="block text-sm"
+              style={{ color: "#282828", fontWeight: 500 }}
+            >
+              Purpose of Email
+            </label>
+            <select
+              id="purpose"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              disabled={loading}
+              className="w-full px-0 py-3 text-base outline-none transition-colors disabled:opacity-50"
+              style={{
+                border: "none",
+                borderBottom: "1px solid #cccccc",
+                borderRadius: 0,
+                color: purpose ? "#282828" : "#999999",
+                backgroundColor: "transparent",
+                fontFamily: brandFont,
+                fontWeight: 300,
+                appearance: "none",
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "right 0 center",
+              }}
+              onFocus={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#3d8080")
+              }
+              onBlur={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#cccccc")
+              }
+            >
+              {PURPOSE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-2">
@@ -237,41 +295,68 @@ export default function SubjectLinesPage() {
                 Subject Lines
               </p>
               {results.subjectLines.map((item, i) => (
-                <div
-                  key={i}
-                  style={{ borderLeft: "3px solid #3d8080", paddingLeft: "20px" }}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <p
-                      className="text-xl"
-                      style={{ color: "#282828", fontWeight: 400 }}
-                    >
-                      {item.subjectLine}
-                    </p>
-                    <span
-                      className="shrink-0 text-xs mt-1"
-                      style={{
-                        color:
-                          item.charCount <= 50
-                            ? "#809a4d"
-                            : item.charCount <= 60
-                              ? "#c69a3f"
-                              : "#c44040",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {item.charCount}
-                    </span>
-                  </div>
-                  <p
-                    className="mt-2 text-sm italic"
-                    style={{ color: "#555555", fontWeight: 300 }}
+                <div key={i} className="space-y-4">
+                  {/* Subject Line + Preview Text block */}
+                  <div
+                    className="rounded px-5 py-4"
+                    style={{
+                      backgroundColor: "#f8fafa",
+                      border: "1px solid #d5e3e3",
+                    }}
                   >
-                    {item.previewText}
-                  </p>
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p
+                          className="text-xs uppercase tracking-[0.1em] mb-2"
+                          style={{ color: "#3d8080", fontWeight: 500 }}
+                        >
+                          Subject Line
+                        </p>
+                        <p
+                          className="text-lg"
+                          style={{ color: "#282828", fontWeight: 500 }}
+                        >
+                          {item.subjectLine}
+                        </p>
+                      </div>
+                      <span
+                        className="shrink-0 text-xs mt-5"
+                        style={{
+                          color:
+                            item.charCount <= 50
+                              ? "#809a4d"
+                              : item.charCount <= 60
+                                ? "#c69a3f"
+                                : "#c44040",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {item.charCount}
+                      </span>
+                    </div>
+                    <div
+                      className="mt-3 h-px w-full"
+                      style={{ backgroundColor: "#d5e3e3" }}
+                    />
+                    <div className="mt-3">
+                      <p
+                        className="text-xs uppercase tracking-[0.1em] mb-1"
+                        style={{ color: "#3d8080", fontWeight: 500 }}
+                      >
+                        Preview Text
+                      </p>
+                      <p
+                        className="text-sm"
+                        style={{ color: "#444444", fontWeight: 400 }}
+                      >
+                        {item.previewText}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Explanation */}
                   <p
-                    className="mt-3 text-sm leading-relaxed"
-                    style={{ color: "#666666", fontWeight: 300 }}
+                    className="text-sm leading-relaxed pl-1"
+                    style={{ color: "#888888", fontWeight: 300 }}
                   >
                     {item.explanation}
                   </p>
