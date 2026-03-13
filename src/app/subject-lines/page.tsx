@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Loader2, Mail, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface SubjectLineResult {
   subjectLine: string;
@@ -14,6 +14,9 @@ interface SubjectLineResponse {
   subjectLines: SubjectLineResult[];
   whyTheseWork: string;
 }
+
+const brandFont =
+  "Graphik, Arial, -apple-system, BlinkMacSystemFont, sans-serif";
 
 export default function SubjectLinesPage() {
   const [url, setUrl] = useState("");
@@ -51,38 +54,48 @@ export default function SubjectLinesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white py-16 px-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-10 text-center">
-          <div
-            className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium"
-            style={{ backgroundColor: "#ebebeb", color: "#282828" }}
+    <main
+      className="min-h-screen bg-white"
+      style={{ fontFamily: brandFont }}
+    >
+      {/* Top accent bar */}
+      <div
+        className="h-1 w-full"
+        style={{
+          background:
+            "linear-gradient(90deg, #3d8080 0%, #a3ca8c 33%, #7239a4 66%, #c69a3f 100%)",
+        }}
+      />
+
+      <div className="mx-auto max-w-xl px-6 py-20">
+        <header className="mb-14">
+          <p
+            className="text-xs uppercase tracking-[0.2em] mb-6"
+            style={{ color: "#3d8080", fontWeight: 500, letterSpacing: "0.2em" }}
           >
-            <Mail className="size-4" />
             Email Subject Line Generator
-          </div>
+          </p>
           <h1
-            className="text-3xl font-bold tracking-tight sm:text-4xl"
-            style={{ color: "#282828" }}
+            className="text-4xl tracking-tight sm:text-5xl leading-tight"
+            style={{ color: "#282828", fontWeight: 300 }}
           >
             Generate Subject Lines
           </h1>
-          <p className="mt-3 text-base" style={{ color: "#666666" }}>
+          <p
+            className="mt-5 text-base leading-relaxed"
+            style={{ color: "#666666", fontWeight: 300 }}
+          >
             Paste a landing page URL and get 3 curiosity-driven subject lines
             optimized for B2B supply chain audiences.
           </p>
         </header>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5 rounded-lg p-6 shadow-sm"
-          style={{ backgroundColor: "#fafafa", border: "1px solid #ebebeb" }}
-        >
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-2">
             <label
               htmlFor="url"
-              className="block text-sm font-medium"
-              style={{ color: "#282828" }}
+              className="block text-sm"
+              style={{ color: "#282828", fontWeight: 500 }}
             >
               Landing Page URL
             </label>
@@ -94,53 +107,79 @@ export default function SubjectLinesPage() {
               onChange={(e) => setUrl(e.target.value)}
               required
               disabled={loading}
-              className="w-full rounded-md px-3 py-2 text-sm outline-none transition-shadow disabled:opacity-50"
+              className="w-full px-0 py-3 text-base outline-none transition-colors disabled:opacity-50"
               style={{
-                border: "1px solid #cccccc",
+                border: "none",
+                borderBottom: "1px solid #cccccc",
+                borderRadius: 0,
                 color: "#282828",
-                backgroundColor: "#ffffff",
+                backgroundColor: "transparent",
+                fontFamily: brandFont,
+                fontWeight: 300,
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#3d8080")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#cccccc")}
+              onFocus={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#3d8080")
+              }
+              onBlur={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#cccccc")
+              }
             />
           </div>
 
           <div className="space-y-2">
             <label
               htmlFor="specifics"
-              className="block text-sm font-medium"
-              style={{ color: "#282828" }}
+              className="block text-sm"
+              style={{ color: "#282828", fontWeight: 500 }}
             >
               Specifics to Include{" "}
-              <span style={{ color: "#999999" }} className="font-normal">
+              <span style={{ color: "#999999", fontWeight: 300 }}>
                 (optional)
               </span>
             </label>
             <textarea
               id="specifics"
-              placeholder="e.g., Mention the webinar date (March 20), include the keynote speaker's name, focus on the ROI angle..."
+              placeholder="e.g., Mention the webinar date, include the keynote speaker's name, focus on the ROI angle..."
               value={specifics}
               onChange={(e) => setSpecifics(e.target.value)}
               rows={3}
               disabled={loading}
-              className="w-full rounded-md px-3 py-2 text-sm outline-none transition-shadow disabled:opacity-50"
+              className="w-full px-0 py-3 text-base outline-none transition-colors disabled:opacity-50 resize-none"
               style={{
-                border: "1px solid #cccccc",
+                border: "none",
+                borderBottom: "1px solid #cccccc",
+                borderRadius: 0,
                 color: "#282828",
-                backgroundColor: "#ffffff",
+                backgroundColor: "transparent",
+                fontFamily: brandFont,
+                fontWeight: 300,
               }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#3d8080")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#cccccc")}
+              onFocus={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#3d8080")
+              }
+              onBlur={(e) =>
+                (e.currentTarget.style.borderBottomColor = "#cccccc")
+              }
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-50"
-            style={{ backgroundColor: "#3d8080" }}
-            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = "#1e5b67")}
-            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = "#3d8080")}
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 text-sm text-white transition-colors disabled:opacity-50"
+            style={{
+              backgroundColor: "#3d8080",
+              fontFamily: brandFont,
+              fontWeight: 500,
+              letterSpacing: "0.05em",
+              borderRadius: 0,
+            }}
+            onMouseEnter={(e) =>
+              !loading && (e.currentTarget.style.backgroundColor = "#1e5b67")
+            }
+            onMouseLeave={(e) =>
+              !loading && (e.currentTarget.style.backgroundColor = "#3d8080")
+            }
           >
             {loading ? (
               <>
@@ -148,20 +187,17 @@ export default function SubjectLinesPage() {
                 Generating...
               </>
             ) : (
-              <>
-                <Sparkles className="size-4" />
-                Generate Subject Lines
-              </>
+              "Generate Subject Lines"
             )}
           </button>
         </form>
 
         {error && (
           <div
-            className="mt-6 rounded-lg p-4 text-sm"
+            className="mt-10 py-4 text-sm"
             style={{
-              backgroundColor: "#fef2f2",
-              border: "1px solid #fecaca",
+              borderLeft: "3px solid #c44040",
+              paddingLeft: "16px",
               color: "#991b1b",
             }}
           >
@@ -170,92 +206,90 @@ export default function SubjectLinesPage() {
         )}
 
         {results && (
-          <div className="mt-8 space-y-6">
-            <div
-              className="rounded-lg p-5 shadow-sm"
-              style={{
-                backgroundColor: "#f7faf6",
-                border: "1px solid #a3ca8c",
-              }}
-            >
-              <h2
-                className="text-xs font-semibold uppercase tracking-wide mb-1"
-                style={{ color: "#809a4d" }}
+          <div className="mt-16 space-y-12">
+            {/* Identified CTA */}
+            <div>
+              <p
+                className="text-xs uppercase tracking-[0.15em] mb-2"
+                style={{ color: "#a3ca8c", fontWeight: 500 }}
               >
                 Identified CTA
-              </h2>
-              <p className="text-base" style={{ color: "#282828" }}>
+              </p>
+              <p
+                className="text-lg"
+                style={{ color: "#282828", fontWeight: 300 }}
+              >
                 {results.identifiedCTA}
               </p>
+              <div
+                className="mt-4 h-px w-12"
+                style={{ backgroundColor: "#a3ca8c" }}
+              />
             </div>
 
-            <div className="space-y-4">
-              <h2
-                className="text-lg font-semibold"
-                style={{ color: "#282828" }}
+            {/* Subject Lines */}
+            <div className="space-y-8">
+              <p
+                className="text-xs uppercase tracking-[0.15em]"
+                style={{ color: "#3d8080", fontWeight: 500 }}
               >
                 Subject Lines
-              </h2>
+              </p>
               {results.subjectLines.map((item, i) => (
                 <div
                   key={i}
-                  className="rounded-lg p-5 shadow-sm"
-                  style={{
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #ebebeb",
-                    borderLeft: "4px solid #3d8080",
-                  }}
+                  style={{ borderLeft: "3px solid #3d8080", paddingLeft: "20px" }}
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-4">
                     <p
-                      className="text-lg font-medium"
-                      style={{ color: "#282828" }}
+                      className="text-xl"
+                      style={{ color: "#282828", fontWeight: 400 }}
                     >
                       {item.subjectLine}
                     </p>
                     <span
-                      className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      className="shrink-0 text-xs mt-1"
                       style={{
-                        backgroundColor:
-                          item.charCount <= 50
-                            ? "#a3ca8c20"
-                            : item.charCount <= 60
-                              ? "#e8ce9640"
-                              : "#c69a3f30",
                         color:
                           item.charCount <= 50
-                            ? "#517222"
+                            ? "#809a4d"
                             : item.charCount <= 60
-                              ? "#8e7029"
-                              : "#8e7029",
+                              ? "#c69a3f"
+                              : "#c44040",
+                        fontWeight: 500,
                       }}
                     >
-                      {item.charCount} chars
+                      {item.charCount}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm" style={{ color: "#666666" }}>
+                  <p
+                    className="mt-3 text-sm leading-relaxed"
+                    style={{ color: "#666666", fontWeight: 300 }}
+                  >
                     {item.explanation}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div
-              className="rounded-lg p-5 shadow-sm"
-              style={{
-                backgroundColor: "#f5f0fa",
-                border: "1px solid #b3ace8",
-              }}
-            >
-              <h2
-                className="text-xs font-semibold uppercase tracking-wide mb-1"
-                style={{ color: "#7239a4" }}
+            {/* Why These Work */}
+            <div>
+              <p
+                className="text-xs uppercase tracking-[0.15em] mb-2"
+                style={{ color: "#7239a4", fontWeight: 500 }}
               >
                 Why These Work
-              </h2>
-              <p className="text-base" style={{ color: "#282828" }}>
+              </p>
+              <p
+                className="text-base leading-relaxed"
+                style={{ color: "#282828", fontWeight: 300 }}
+              >
                 {results.whyTheseWork}
               </p>
+              <div
+                className="mt-4 h-px w-12"
+                style={{ backgroundColor: "#7239a4" }}
+              />
             </div>
           </div>
         )}
