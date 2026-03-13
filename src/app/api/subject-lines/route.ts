@@ -127,13 +127,15 @@ The primary CTA is the ONE specific action this landing page was built to drive.
 
 ## Subject Line Principles:
 
+**GROUNDED IN THE PAGE CONTENT — THIS IS NON-NEGOTIABLE.** Every subject line MUST reference specific details from the landing page above — a specific topic, speaker name, stat, event name, report title, or concrete claim found in the content. Generic subject lines like "Your seat is filling up fast" or "Don't miss this opportunity" that could apply to ANY page are unacceptable. If someone read the subject line, they should be able to guess what the landing page is about.
+
 **Curiosity-driven, not clickbait.** Create an open loop — a question or implication the reader can only resolve by opening the email. The payoff must actually be there. Supply chain pros unsubscribe fast if they feel tricked.
 
 Good curiosity patterns:
-- Hint at a surprising data point or insight without revealing it
-- Reference a shared frustration and imply a new angle
-- Use specificity to signal real substance (numbers, names, concrete details)
-- Tease a contrarian or counterintuitive idea
+- Hint at a surprising data point or insight from the page without fully revealing it
+- Reference a specific pain point the page addresses and imply a new angle
+- Use specificity FROM THE PAGE to signal real substance (numbers, names, concrete details)
+- Tease a contrarian or counterintuitive idea found in the page content
 
 **Align with the CTA, not just the topic.** If the page wants someone to register for a webinar, the subject line should make them want to learn something. If it wants a report download, make them want to see the data. The subject line sets up the CTA as the natural resolution.
 
@@ -152,7 +154,9 @@ For each subject line, also write preview text — the snippet shown after the s
 - Never start with "View in browser" or other boilerplate
 - Work as a natural continuation when read alongside the subject line
 ${hasPurpose ? `\n**REMINDER: You are writing for a ${purpose!.replace(/-/g, " ")} email. Every subject line and preview text must reflect this purpose. Do NOT write generic subject lines — write ones that only make sense for a ${purpose!.replace(/-/g, " ")} email.**\n` : ""}
-Identify the primary CTA on the page, generate 3 subject lines (each with preview text) and explanations of the curiosity hook and connection to the CTA, and summarize why they work as a set.`;
+Identify the primary CTA on the page, generate 3 subject lines (each with preview text) and explanations of the curiosity hook and connection to the CTA, and summarize why they work as a set.
+
+**FINAL CHECK: Before returning, verify that each subject line references something specific from the landing page content. If a subject line could work for any random page, rewrite it to include a concrete detail from THIS page.**`;
 }
 
 export async function POST(request: Request) {
