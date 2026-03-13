@@ -36,12 +36,19 @@ export default function SubjectLinesPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<SubjectLineResponse | null>(null);
+  const [feedback, setFeedback] = useState("");
+  const [feedbackSending, setFeedbackSending] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
     setResults(null);
+    setFeedbackSent(false);
+    setFeedbackError(null);
+    setFeedback("");
 
     try {
       const res = await fetch("/api/subject-lines", {
@@ -66,6 +73,32 @@ export default function SubjectLinesPage() {
       setError("Network error — please check your connection and try again");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleFeedback() {
+    if (!feedback.trim()) return;
+    setFeedbackSending(true);
+    setFeedbackError(null);
+
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feedback }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setFeedbackError(data.error || "Failed to send feedback");
+        return;
+      }
+
+      setFeedbackSent(true);
+    } catch {
+      setFeedbackError("Network error — please try again");
+    } finally {
+      setFeedbackSending(false);
     }
   }
 
@@ -375,6 +408,91 @@ export default function SubjectLinesPage() {
                 className="mt-4 h-px w-12"
                 style={{ backgroundColor: "#7239a4" }}
               />
+            </div>
+
+            {/* Feedback */}
+            <div
+              className="pt-8"
+              style={{ borderTop: "1px solid #e5e5e5" }}
+            >
+              <p
+                className="text-xs uppercase tracking-[0.15em] mb-3"
+                style={{ color: "#3d8080", fontWeight: 500 }}
+              >
+                Feedback
+              </p>
+              {feedbackSent ? (
+                <p
+                  className="text-sm"
+                  style={{ color: "#809a4d", fontWeight: 400 }}
+                >
+                  Thanks for your feedback!
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  <textarea
+                    placeholder="How did the tool work for you? Any suggestions?"
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    rows={3}
+                    disabled={feedbackSending}
+                    className="w-full px-0 py-3 text-sm outline-none transition-colors disabled:opacity-50 resize-none"
+                    style={{
+                      border: "none",
+                      borderBottom: "1px solid #cccccc",
+                      borderRadius: 0,
+                      color: "#282828",
+                      backgroundColor: "transparent",
+                      fontFamily: brandFont,
+                      fontWeight: 300,
+                    }}
+                    onFocus={(e) =>
+                      (e.currentTarget.style.borderBottomColor = "#3d8080")
+                    }
+                    onBlur={(e) =>
+                      (e.currentTarget.style.borderBottomColor = "#cccccc")
+                    }
+                  />
+                  {feedbackError && (
+                    <p
+                      className="text-sm"
+                      style={{ color: "#c44040", fontWeight: 400 }}
+                    >
+                      {feedbackError}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleFeedback}
+                    disabled={feedbackSending || !feedback.trim()}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2 text-xs text-white transition-colors disabled:opacity-50"
+                    style={{
+                      backgroundColor: "#3d8080",
+                      fontFamily: brandFont,
+                      fontWeight: 500,
+                      letterSpacing: "0.05em",
+                      borderRadius: 0,
+                    }}
+                    onMouseEnter={(e) =>
+                      !feedbackSending &&
+                      (e.currentTarget.style.backgroundColor = "#1e5b67")
+                    }
+                    onMouseLeave={(e) =>
+                      !feedbackSending &&
+                      (e.currentTarget.style.backgroundColor = "#3d8080")
+                    }
+                  >
+                    {feedbackSending ? (
+                      <>
+                        <Loader2 className="size-3 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      "Send Feedback"
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
