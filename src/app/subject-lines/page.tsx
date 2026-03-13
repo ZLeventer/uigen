@@ -97,13 +97,6 @@ export default function SubjectLinesPage() {
           >
             Generate Subject Lines
           </h1>
-          <p
-            className="mt-5 text-base leading-relaxed"
-            style={{ color: "#666666", fontWeight: 300 }}
-          >
-            Paste a landing page URL and get 3 curiosity-driven subject lines
-            optimized for B2B supply chain audiences.
-          </p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-8">

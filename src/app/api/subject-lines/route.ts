@@ -74,8 +74,8 @@ const PURPOSE_GUIDANCE: Record<string, string> = {
   "event-last-call": `This is a LAST CALL / final reminder email before an event.
 - Create genuine urgency — seats filling, time running out, last chance to join
 - Keep it punchy and direct — no long explanations
-- Numbers work well here (e.g., "48 hours", "only X spots")
-- Preview text should reinforce the deadline or scarcity`,
+- Do NOT use specific time frames like "48 hours", "2 days", "tomorrow" unless the user provides a date in the Additional Requirements. Use timeless urgency instead (e.g., "spots are filling", "don't miss out", "registration closing soon")
+- Preview text should reinforce the scarcity or final-chance framing`,
 
   "content-download": `This is a CONTENT DOWNLOAD PROMOTION email (whitepaper, guide, report, ebook).
 - Lead with the insight or data the content contains, not the format
@@ -101,18 +101,22 @@ function buildPrompt(
   purpose?: string,
   specifics?: string
 ): string {
-  const purposeBlock = purpose && PURPOSE_GUIDANCE[purpose]
-    ? `## Email Purpose:\n\n${PURPOSE_GUIDANCE[purpose]}\n\n`
-    : "";
+  const hasPurpose = purpose && PURPOSE_GUIDANCE[purpose];
 
   return `You are an expert B2B email marketing copywriter specializing in supply chain SaaS.
 
-Analyze the following landing page content and generate 3 email subject lines that would drive opens and clicks to this page.
+${hasPurpose ? `## EMAIL PURPOSE — THIS IS CRITICAL
+
+${PURPOSE_GUIDANCE[purpose!]}
+
+Every subject line, preview text, and explanation you generate MUST be written specifically for this email purpose. The purpose above is the #1 factor shaping your output — it determines the tone, urgency, framing, and what the reader needs to feel.
+
+` : ""}Analyze the following landing page content and generate 3 email subject lines${hasPurpose ? ` for a **${purpose!.replace(/-/g, " ").toUpperCase()}** email` : ""} that would drive opens and clicks to this page.
 
 ## Landing Page Content:
 ${pageContent}
 
-${purposeBlock}${specifics ? `## Additional Requirements:\n${specifics}\n` : ""}
+${specifics ? `## Additional Requirements:\n${specifics}\n` : ""}
 ## Identifying the Primary CTA:
 
 The primary CTA is the ONE specific action this landing page was built to drive. It is NOT a generic site-wide element. Follow these rules:
@@ -147,7 +151,7 @@ For each subject line, also write preview text — the snippet shown after the s
 - Continue the curiosity loop or provide a concrete reason to open
 - Never start with "View in browser" or other boilerplate
 - Work as a natural continuation when read alongside the subject line
-
+${hasPurpose ? `\n**REMINDER: You are writing for a ${purpose!.replace(/-/g, " ")} email. Every subject line and preview text must reflect this purpose. Do NOT write generic subject lines — write ones that only make sense for a ${purpose!.replace(/-/g, " ")} email.**\n` : ""}
 Identify the primary CTA on the page, generate 3 subject lines (each with preview text) and explanations of the curiosity hook and connection to the CTA, and summarize why they work as a set.`;
 }
 
