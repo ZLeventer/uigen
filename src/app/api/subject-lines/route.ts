@@ -24,9 +24,24 @@ const SubjectLineResponseSchema = z.object({
 });
 
 function extractTextFromHtml(html: string): string {
-  return html
+  // Remove boilerplate sections that contain generic site-wide CTAs
+  let cleaned = html
+    .replace(/<nav[\s\S]*?<\/nav>/gi, "")
+    .replace(/<header[\s\S]*?<\/header>/gi, "")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, "")
+    .replace(/<aside[\s\S]*?<\/aside>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, "");
+
+  // Try to extract just the <main> content if it exists
+  const mainMatch = cleaned.match(/<main[\s\S]*?<\/main>/i);
+  if (mainMatch) {
+    cleaned = mainMatch[0];
+  }
+
+  return cleaned
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
@@ -47,6 +62,14 @@ Analyze the following landing page content and generate 3 email subject lines th
 ${pageContent}
 
 ${specifics ? `## Additional Requirements:\n${specifics}\n` : ""}
+## Identifying the Primary CTA:
+
+The primary CTA is the ONE specific action this landing page was built to drive. It is NOT a generic site-wide element. Follow these rules:
+- IGNORE generic site CTAs: "Contact Us", "Subscribe to Newsletter", "Request a Demo" (unless the entire page is a demo request page), cookie consent, footer links
+- LOOK FOR the page-specific CTA: event registration, content download, webinar signup, report access, product trial — the action tied to the unique offer on THIS page
+- The primary CTA is usually the most prominent button/form in the hero or main content area, often repeated 2-3 times on the page
+- If the page headline promises something specific (a webinar, a guide, a report), the CTA is the action that delivers on that promise
+
 ## Subject Line Principles:
 
 **Curiosity-driven, not clickbait.** Create an open loop — a question or implication the reader can only resolve by opening the email. The payoff must actually be there. Supply chain pros unsubscribe fast if they feel tricked.
